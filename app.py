@@ -43,6 +43,28 @@ def insert_record():
     connection.close()
     return "Record inserted successfully"
 
+@app.route('/delete_record/<int:id>', methods=['DELETE'])
+def delete_record(id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+ 
+    # Optional: Check if the record exists before deleting
+    cursor.execute("SELECT * FROM example_table WHERE id = %s", (id,))
+    record = cursor.fetchone()
+    if not record:
+        connection.close()
+        return "Record not found", 404
+ 
+    # Delete the record
+    delete_query = "DELETE FROM example_table WHERE id = %s"
+    cursor.execute(delete_query, (id,))
+    connection.commit()
+    connection.close()
+ 
+    return f"Record with id {id} deleted successfully", 200
+        
+        
+
 @app.route('/data')
 def data():
     connection = get_db_connection()
